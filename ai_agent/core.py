@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import MemorySaver  # ✅ Para async + persistence
+from streamlit import st
 
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from ai_agent.behavior import ATLA_BEHAVIOR
@@ -22,7 +23,7 @@ async def load_mcp_tools():
             "transport": "streamable_http",  # transporte HTTP suportando headers
             "url": "https://api.githubcopilot.com/mcp/",  # você usaria o endpoint público de GitHub
             "headers": {
-                "Authorization": f"Bearer {os.getenv('GITHUB_ACESS_TOKEN')}"
+                "Authorization": f"Bearer {st.secrets['GITHUB_ACESS_TOKEN']}"
                 }
             }
         }
@@ -37,7 +38,7 @@ def get_agent_executor():
     llm = ChatOpenAI(
         model="gpt-5-nano-2025-08-07", # Modelo mais recente
         temperature=0.7,
-        api_key = os.getenv("OPENAI_API_KEY"),
+        api_key = st.secrets["OPENAI_API_KEY"],
         streaming=True  # Para stream tokens
     )
 
