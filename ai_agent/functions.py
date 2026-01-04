@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
-import os
+import streamlit as st
 
 # ==================================================================
 # Funções de Análise de Contexto:
@@ -53,9 +53,9 @@ def read_md_content(file_path):
 def send_email_logic(
     assunto,
     corpo,
-    destinatarios = os.getenv("EMAIL_USER"),
-    remetente = os.getenv("EMAIL_USER"),
-    senha = os.getenv("EMAIL_PASSWORD"),
+    destinatarios = st.secrets("EMAIL_USER"),
+    remetente = st.secrets("EMAIL_SENDER"),
+    senha = st.secrets("EMAIL_PASSWORD"),
     anexos=None,
     html=False
 ):
@@ -163,16 +163,3 @@ def get_baldros_repos() -> List[Dict]:
                 break
     
     return repos
-
-if __name__ == "__main__":
-    repos = get_baldros_repos()
-    
-    print(f"Total de repositórios: {len(repos)}\n")
-    
-    for repo in repos:
-        name = repo["name"]
-        desc = repo.get("description", "Sem descrição")
-        url = repo["html_url"]
-        print(f"• {name}")
-        print(f"  {desc}")
-        print(f"  {url}\n")
