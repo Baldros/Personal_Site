@@ -12,12 +12,6 @@ FILES_PATH = os.path.join(BASE_DIR, "Context", "files")
 # ======================================================
 # Tool Input Schemas
 # ======================================================
-
-class EmptyInput(BaseModel):
-    """Schema for tools that don't require input parameters."""
-    pass
-
-
 class SendEmailInput(BaseModel):
     """Input schema for the send_email tool."""
     subject: str = Field(
@@ -77,7 +71,6 @@ class TableAnalysisInput(BaseModel):
 
 @tool(
     "get_professional_experience",
-    args_schema=EmptyInput,
     return_direct=False,
     description=(
         "Retrieves André Amorim's detailed professional experience history. "
@@ -96,7 +89,6 @@ def get_professional_experience() -> str:
 
 @tool(
     "get_academic_background",
-    args_schema=EmptyInput,
     return_direct=False,
     description=(
         "Retrieves André Amorim's academic background and education details. "
@@ -115,7 +107,6 @@ def get_academic_background() -> str:
 
 @tool(
     "get_technical_skills",
-    args_schema=EmptyInput,
     return_direct=False,
     description=(
         "Retrieves the comprehensive list of André Amorim's technical skills and technologies. "
@@ -134,7 +125,6 @@ def get_technical_skills() -> str:
 
 @tool(
     "get_contact_info",
-    args_schema=EmptyInput,
     return_direct=False,
     description=(
         "Retrieves André Amorim's contact information and social media links. "
@@ -153,7 +143,6 @@ def get_contact_info() -> str:
 
 @tool(
     "get_executive_summary",
-    args_schema=EmptyInput,
     return_direct=False,
     description=(
         "Retrieves a high-level professional summary of André Amorim. "
@@ -176,7 +165,6 @@ def get_executive_summary() -> str:
 
 @tool(
     "get_atlas_product_info",
-    args_schema=EmptyInput,
     return_direct=False,
     description=(
         "Retrieves comprehensive information about the 'Atlas Desktop' product. "
@@ -199,7 +187,6 @@ def get_atlas_product_info() -> str:
 
 @tool(
     "get_agent_capabilities",
-    args_schema=EmptyInput,
     return_direct=False,
     description=(
         "Retrieves a detailed list of the Atlas Agent's specific capabilities. "
