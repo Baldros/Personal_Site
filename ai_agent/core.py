@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import MemorySaver  # ✅ Para async + persistence
-from streamlit import st
+import streamlit as st
 
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from ai_agent.behavior import ATLA_BEHAVIOR
