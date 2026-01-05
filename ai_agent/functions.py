@@ -53,9 +53,9 @@ def read_md_content(file_path):
 def send_email_logic(
     assunto,
     corpo,
-    destinatarios = st.secrets("EMAIL_USER"),
-    remetente = st.secrets("EMAIL_SENDER"),
-    senha = st.secrets("EMAIL_PASSWORD"),
+    destinatarios = st.secrets["EMAIL_USER"],
+    remetente = st.secrets["EMAIL_SENDER"],
+    senha = st.secrets["EMAIL_PASSWORD"],
     anexos=None,
     html=False
 ):
