@@ -23,7 +23,7 @@ async def load_mcp_tools():
             "transport": "streamable_http",  # transporte HTTP suportando headers
             "url": "https://api.githubcopilot.com/mcp/",  # você usaria o endpoint público de GitHub
             "headers": {
-                "Authorization": f"Bearer {st.secrets['GITHUB_ACESS_TOKEN']}"
+                "Authorization": f"Bearer {st.secrets['GITHUB_ACCESS_TOKEN']}"
                 }
             }
         }
