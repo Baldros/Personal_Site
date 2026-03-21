@@ -62,7 +62,7 @@ def get_agent_executor():
     agent = create_agent(
         llm, 
         tools=all_tools,  # ✅ Mistura perfeita!
-        system_prompt=ATLA_BEHAVIOR + "\n"+ read_markdown("skills"),
+        system_prompt=ATLA_BEHAVIOR + "\n"+ read_markdown(SKILL_PATH),
         checkpointer=MemorySaver()  # ✅ Thread persistence + async ok
     )
     
