@@ -15,6 +15,16 @@ from ai_agent.tools import LOCAL_TOOLS
 # Load environment variables
 load_dotenv()
 
+# Skill path:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SKILL_PATH = os.path.join(BASE_DIR, "skills","SKILL.md")
+
+
+# Função para ler a SKILL
+def read_markdown(path: str) -> str:
+    with open(path, "r", encoding="utf-8") as file:
+        return file.read()
+
 # ✅ Função ASYNC para carregar MCP tools
 async def load_mcp_tools():
     """Carrega tools MCP (GitHub)."""
@@ -52,7 +62,7 @@ def get_agent_executor():
     agent = create_agent(
         llm, 
         tools=all_tools,  # ✅ Mistura perfeita!
-        system_prompt=ATLA_BEHAVIOR,
+        system_prompt=ATLA_BEHAVIOR + "\n"+ read_markdown("skills"),
         checkpointer=MemorySaver()  # ✅ Thread persistence + async ok
     )
     
