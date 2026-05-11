@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+
+.venv/
+
+.streamlit/secrets.toml
+
+History/*.sqlite3
+History/*.sqlite3-*
+History/chat_*.json
