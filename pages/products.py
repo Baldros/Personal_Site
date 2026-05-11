@@ -9,28 +9,17 @@ st.markdown("""
 <style>
     /* Hero Section */
     .product-hero {
-        background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
+        background: linear-gradient(135deg, #1f4775 0%, #2f6f89 100%);
         color: white;
         padding: 60px 50px;
-        border-radius: 24px;
+        border-radius: 8px;
         text-align: center;
         margin-bottom: 40px;
         position: relative;
         overflow: hidden;
     }
     .product-hero::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(0,120,212,0.1) 0%, transparent 70%);
-        animation: pulse 4s ease-in-out infinite;
-    }
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.5; }
-        50% { transform: scale(1.1); opacity: 0.8; }
+        display: none;
     }
     .product-hero h1 {
         font-size: 3.5rem;
@@ -49,7 +38,7 @@ st.markdown("""
     }
     .product-hero .description {
         font-size: 1.1rem;
-        opacity: 0.8;
+        color: rgba(255,255,255,0.86);
         max-width: 700px;
         margin: 0 auto 30px auto;
         line-height: 1.7;
@@ -80,7 +69,7 @@ st.markdown("""
     .download-info {
         margin-top: 15px;
         font-size: 0.9rem;
-        opacity: 0.7;
+        color: rgba(255,255,255,0.76);
         position: relative;
         z-index: 1;
     }

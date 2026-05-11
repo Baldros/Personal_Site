@@ -30,7 +30,7 @@ st.markdown(
         margin: -1.25rem calc(50% - 50vw) 2.25rem;
         padding: 4rem max(2rem, calc((100vw - 1180px) / 2)) 3.25rem;
         background-image:
-            linear-gradient(90deg, rgba(10,18,31,0.92) 0%, rgba(13,28,47,0.78) 44%, rgba(13,28,47,0.34) 100%),
+            linear-gradient(90deg, rgba(27,57,91,0.90) 0%, rgba(36,87,122,0.72) 46%, rgba(58,111,137,0.28) 100%),
             var(--hero-image);
         background-size: cover;
         background-position: center;
@@ -164,7 +164,7 @@ st.markdown(
     }
 
     .focus-panel {
-        background: #142238;
+        background: #1f4775;
         color: #ffffff;
     }
 
@@ -216,7 +216,7 @@ st.markdown(
         margin: 2.5rem 0 0.25rem;
         padding: 2rem;
         border-radius: 8px;
-        background: linear-gradient(135deg, #142238, #26415f);
+        background: linear-gradient(135deg, #1f4775, #2f6f89);
         color: #ffffff;
     }
 

@@ -42,9 +42,9 @@ def load_css():
         """
     <style>
         :root {
-            --atlas-bg: #f5f7fb;
+            --atlas-bg: #f7f8fb;
             --atlas-surface: #ffffff;
-            --atlas-surface-soft: #eef4f8;
+            --atlas-surface-soft: #f0f3f7;
             --atlas-ink: #152033;
             --atlas-muted: #5f6b7a;
             --atlas-border: #dce4ee;
@@ -147,26 +147,70 @@ def load_css():
 
         [data-testid="stSidebar"] {
             border-right: 1px solid var(--atlas-border);
+            background: #f7f8fb;
         }
 
         [data-testid="stSidebar"] > div:first-child {
-            background: linear-gradient(180deg, #101b2e 0%, #16283f 56%, #f7f9fc 56%);
+            background: #f7f8fb;
+            padding-top: 1.25rem;
         }
 
         [data-testid="stSidebar"] h1 {
-            color: #ffffff !important;
-            font-size: 1.25rem !important;
+            color: var(--atlas-ink) !important;
+            font-size: 1.18rem !important;
             margin-bottom: 0.2rem;
         }
 
         [data-testid="stSidebar"] .stCaptionContainer {
-            color: rgba(255,255,255,0.72);
+            color: var(--atlas-muted);
+        }
+
+        [data-testid="stSidebarNav"] {
+            padding-top: 0.2rem;
+            padding-bottom: 0.7rem;
+        }
+
+        [data-testid="stSidebarNav"] a,
+        [data-testid="stSidebarNav"] span {
+            color: #263548 !important;
+        }
+
+        [data-testid="stSidebarNav"] a:hover {
+            background: #e9eef5 !important;
+            color: var(--atlas-blue) !important;
+        }
+
+        .atlas-sidebar-header {
+            padding: 0.85rem 0 0.65rem;
+            margin: 0.15rem 0 0.55rem;
+            border-top: 1px solid var(--atlas-border);
+            border-bottom: 1px solid var(--atlas-border);
+        }
+
+        .atlas-sidebar-title {
+            margin: 0;
+            color: var(--atlas-ink);
+            font-size: 1.05rem;
+            font-weight: 760;
+            line-height: 1.25;
+        }
+
+        .atlas-sidebar-subtitle {
+            margin: 0.25rem 0 0;
+            color: var(--atlas-muted);
+            font-size: 0.82rem;
+            line-height: 1.45;
         }
 
         [data-testid="stChatMessage"] {
             border-radius: 8px;
             border: 1px solid rgba(220,228,238,0.86);
-            box-shadow: 0 8px 22px rgba(17,31,51,0.05);
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 6px 18px rgba(17,31,51,0.045);
+        }
+
+        [data-testid="stSidebar"] [data-testid="stChatMessage"] {
+            margin-bottom: 0.55rem;
         }
 
         .stChatFloatingInputContainer textarea {
@@ -248,7 +292,7 @@ def load_css():
         .product-hero {
             border-radius: 8px !important;
             background:
-                linear-gradient(135deg, rgba(16,27,46,0.96), rgba(32,70,105,0.94)) !important;
+                linear-gradient(135deg, #1f4775, #2f6f89) !important;
             box-shadow: var(--atlas-shadow) !important;
         }
 
@@ -423,17 +467,17 @@ def render_sidebar_chat():
     _ensure_chat_state()
 
     with st.sidebar:
-        st.title("Atlas")
-        st.caption("Portfolio assistant")
-
-        if st.button("New conversation", use_container_width=True):
-            record_event(
-                st.session_state.thread_id,
-                "conversation_closed",
-                metadata={"reason": "user_started_new_conversation"},
-            )
-            _start_new_conversation()
-            st.rerun()
+        st.markdown(
+            """
+            <div class="atlas-sidebar-header">
+                <p class="atlas-sidebar-title">Atlas</p>
+                <p class="atlas-sidebar-subtitle">
+                    Portfolio assistant. The thread is preserved while you browse the site.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         agent_executor = _cached_agent_executor()
         if agent_executor:
