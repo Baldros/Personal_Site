@@ -1,69 +1,79 @@
-import os
 import asyncio
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from langchain.agents import create_agent
-from langgraph.checkpoint.memory import MemorySaver  # ✅ Para async + persistence
+import os
+from typing import Any
+
 import streamlit as st
-
+from dotenv import load_dotenv
+from langchain.agents import create_agent
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from ai_agent.behavior import ATLA_BEHAVIOR
+from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.memory import MemorySaver
 
-# Local Tools
+from ai_agent.behavior import ATLAS_BEHAVIOR
 from ai_agent.tools import LOCAL_TOOLS
 
-# Load environment variables
+
 load_dotenv()
 
-# Skill path:
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SKILL_PATH = os.path.join(BASE_DIR, "skills","SKILL.md")
+DEFAULT_MODEL = "gpt-5-nano-2025-08-07"
+GITHUB_MCP_URL = "https://api.githubcopilot.com/mcp/"
 
 
-# Função para ler a SKILL
-def read_markdown(path: str) -> str:
-    with open(path, "r", encoding="utf-8") as file:
-        return file.read()
+def _secret(name: str, default: str | None = None) -> str | None:
+    """Read configuration from Streamlit secrets first, then environment."""
+    try:
+        value = st.secrets.get(name)
+    except Exception:
+        value = None
+    return value or os.getenv(name, default)
 
-# ✅ Função ASYNC para carregar MCP tools
-async def load_mcp_tools():
-    """Carrega tools MCP (GitHub)."""
+
+def _run_async(coro: Any):
+    """Run a coroutine from Streamlit's synchronous execution model."""
+    return asyncio.run(coro)
+
+
+async def load_mcp_tools(github_token: str | None) -> list:
+    """Load GitHub MCP tools when credentials are available."""
+    if not github_token:
+        return []
+
     mcp_config = {
         "github": {
-            "transport": "streamable_http",  # transporte HTTP suportando headers
-            "url": "https://api.githubcopilot.com/mcp/",  # você usaria o endpoint público de GitHub
-            "headers": {
-                "Authorization": f"Bearer {st.secrets['GITHUB_ACCESS_TOKEN']}"
-                }
-            }
+            "transport": "streamable_http",
+            "url": GITHUB_MCP_URL,
+            "headers": {"Authorization": f"Bearer {github_token}"},
         }
-
+    }
     client = MultiServerMCPClient(mcp_config)
-    return await client.get_tools()  # ✅ LangChain tools normais!
+    return await client.get_tools()
+
 
 def get_agent_executor():
-    """Configura agente com LOCAL + MCP tools."""
-    
-    # 1. Model
-    llm = ChatOpenAI(
-        model="gpt-5-nano-2025-08-07", # Modelo mais recente
-        temperature=0.7,
-        api_key = st.secrets["OPENAI_API_KEY"],
-        streaming=True  # Para stream tokens
+    """Configure Atlas with local tools, optional MCP tools, and thread memory."""
+    api_key = _secret("OPENAI_API_KEY")
+    if not api_key:
+        return None
+
+    model = ChatOpenAI(
+        model=_secret("ATLAS_MODEL", DEFAULT_MODEL),
+        temperature=float(_secret("ATLAS_TEMPERATURE", "0.2")),
+        api_key=api_key,
+        streaming=True,
+        timeout=45,
+        max_retries=2,
     )
 
-    # 2. CARREGA MCP + MISTURA (uma única chamada async em sync func)
-    mcp_tools = asyncio.run(load_mcp_tools())  # ✅ Resolve async aqui!
+    tools = list(LOCAL_TOOLS)
+    try:
+        tools.extend(_run_async(load_mcp_tools(_secret("GITHUB_ACCESS_TOKEN"))))
+    except Exception as exc:
+        # The portfolio remains useful with local evidence tools if MCP is down.
+        print(f"Atlas MCP tools unavailable: {exc}")
 
-    # 3. ✅ TODAS as tools: LOCAL + MCP
-    all_tools = LOCAL_TOOLS + mcp_tools
-
-    # 5. ✅ Agente com MemorySaver (persiste threads)
-    agent = create_agent(
-        llm, 
-        tools=all_tools,  # ✅ Mistura perfeita!
-        system_prompt=ATLA_BEHAVIOR + "\n"+ read_markdown(SKILL_PATH),
-        checkpointer=MemorySaver()  # ✅ Thread persistence + async ok
+    return create_agent(
+        model,
+        tools=tools,
+        system_prompt=ATLAS_BEHAVIOR,
+        checkpointer=MemorySaver(),
     )
-    
-    return agent

@@ -1,3 +1,5 @@
+import os
+
 # Exclusivo para envio de Email via SMTP
 import smtplib
 from email.mime.text import MIMEText
@@ -11,6 +13,14 @@ import streamlit as st
 # ==================================================================
 
 import pandas as pd
+
+
+def read_config(name, default=None):
+    try:
+        value = st.secrets.get(name)
+    except Exception:
+        value = None
+    return value or os.getenv(name, default)
 
 def load_dataframe(file_path):
     """Load a dataframe from a CSV or Excel file."""
@@ -53,9 +63,9 @@ def read_md_content(file_path):
 def send_email_logic(
     assunto,
     corpo,
-    destinatarios = st.secrets["EMAIL_USER"],
-    remetente = st.secrets["EMAIL_SENDER"],
-    senha = st.secrets["EMAIL_PASSWORD"],
+    destinatarios=None,
+    remetente=None,
+    senha=None,
     anexos=None,
     html=False
 ):
@@ -76,6 +86,13 @@ def send_email_logic(
     """
     
     try:
+        destinatarios = destinatarios or read_config("EMAIL_USER")
+        remetente = remetente or read_config("EMAIL_SENDER") or read_config("EMAIL_USER")
+        senha = senha or read_config("EMAIL_PASSWORD")
+
+        if not destinatarios or not remetente or not senha:
+            return "Email credentials are not configured."
+
         # Cria a mensagem
         msg = MIMEMultipart()
         msg['From'] = remetente
@@ -125,10 +142,10 @@ def send_email_logic(
         return "Erro de autenticação. Verifique seu email e senha de app."
 
     except smtplib.SMTPException as e:
-        return "Erro SMTP: {e}"
+        return f"Erro SMTP: {e}"
     
     except Exception as e:
-        return "Erro ao enviar email: {e}"
+        return f"Erro ao enviar email: {e}"
 
 # ==================================================================
 # GitHub Functions
@@ -148,7 +165,7 @@ def get_baldros_repos() -> List[Dict]:
     url = "https://api.github.com/users/Baldros/repos"
     
     while url:
-        response = requests.get(url, params={"per_page": 100})
+        response = requests.get(url, params={"per_page": 100}, timeout=15)
         response.raise_for_status()
         
         repos.extend(response.json())
