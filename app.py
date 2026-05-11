@@ -1,230 +1,372 @@
-# Main app:
 """
-Main app page - Professional Portfolio Landing Page
+Main portfolio landing page.
 """
 
 import streamlit as st
-from streamlit_extras.colored_header import colored_header
-from utils import render_navbar, load_css, render_sidebar_chat
 
-# Setup page
-st.set_page_config(page_title="André Amorim | Software Engineer & AI Specialist", page_icon="🚀", layout="wide")
+from utils import get_featured_image_data_uri, load_css, render_navbar, render_sidebar_chat
+
+
+st.set_page_config(
+    page_title="Andre Amorim | Software Engineer & AI Specialist",
+    page_icon="A",
+    layout="wide",
+)
 load_css()
 render_sidebar_chat()
 
-# Custom CSS for enhanced landing page
-st.markdown("""
+hero_image = get_featured_image_data_uri()
+hero_style = f' style="--hero-image: url(\'{hero_image}\');"' if hero_image else ""
+
+st.markdown(
+    """
 <style>
-    /* Hero Section */
     .hero-section {
-        background: linear-gradient(135deg, #0055a5 0%, #00a5a5 100%);
-        color: white;
-        padding: 60px 40px;
-        border-radius: 0 0 30px 30px;
-        margin: -1rem -1rem 2rem -1rem;
-        text-align: center;
-    }
-    .hero-section h1 {
-        font-size: 3rem;
-        font-weight: 700;
-        margin-bottom: 10px;
-        color: white;
-    }
-    .hero-section .subtitle {
-        font-size: 1.3rem;
-        opacity: 0.95;
-        margin-bottom: 20px;
-    }
-    .hero-section .tagline {
-        font-size: 1rem;
-        opacity: 0.85;
-        font-style: italic;
-    }
-    
-    /* Social Links */
-    .social-links {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 25px;
-    }
-    .social-links a {
-        background: rgba(255,255,255,0.2);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 25px;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .social-links a:hover {
-        background: rgba(255,255,255,0.35);
-        transform: translateY(-2px);
-    }
-    
-    /* Summary Card */
-    .summary-card {
-        background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-        border-left: 5px solid #0078d4;
-        border-radius: 16px;
-        padding: 35px 40px;
-        margin: 30px 0;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-    }
-    .summary-card h2 {
-        color: #0055a5;
-        font-size: 1.6rem;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .summary-card p {
-        font-size: 1.05rem;
-        line-height: 1.8;
-        color: #374151;
-        margin-bottom: 16px;
-    }
-    
-    /* Highlight Cards */
-    .highlights-container {
+        --hero-image: linear-gradient(135deg, #17243a, #204669);
+        min-height: 68vh;
+        max-height: 760px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-        margin: 30px 0;
+        align-items: end;
+        margin: -1.25rem calc(50% - 50vw) 2.25rem;
+        padding: 4rem max(2rem, calc((100vw - 1180px) / 2)) 3.25rem;
+        background-image:
+            linear-gradient(90deg, rgba(10,18,31,0.92) 0%, rgba(13,28,47,0.78) 44%, rgba(13,28,47,0.34) 100%),
+            var(--hero-image);
+        background-size: cover;
+        background-position: center;
+        color: #ffffff;
     }
+
+    .hero-copy {
+        max-width: 760px;
+    }
+
+    .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-bottom: 1rem;
+        padding: 0.45rem 0.75rem;
+        border: 1px solid rgba(255,255,255,0.24);
+        border-radius: 999px;
+        color: rgba(255,255,255,0.84);
+        font-size: 0.86rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .hero-section h1 {
+        max-width: 760px;
+        margin: 0 0 1rem;
+        color: #ffffff !important;
+        font-size: 4rem;
+        line-height: 1.02;
+    }
+
+    .hero-section .subtitle {
+        max-width: 660px;
+        margin: 0 0 1.65rem;
+        color: rgba(255,255,255,0.86);
+        font-size: 1.2rem;
+        line-height: 1.65;
+    }
+
+    .hero-actions,
+    .metric-strip,
+    .highlights-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+
+    .hero-actions a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.85rem;
+        padding: 0.72rem 1.05rem;
+        border-radius: 8px;
+        font-weight: 720;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .hero-actions .primary-action {
+        background: #ffffff;
+        color: #152033;
+    }
+
+    .hero-actions .secondary-action {
+        color: #ffffff;
+        background: rgba(255,255,255,0.1);
+    }
+
+    .metric-strip {
+        margin: 0 0 2.25rem;
+    }
+
+    .metric {
+        flex: 1 1 12rem;
+        min-height: 7.75rem;
+        padding: 1.25rem;
+        border-radius: 8px;
+        background: #ffffff;
+        border: 1px solid var(--atlas-border);
+        box-shadow: var(--atlas-shadow);
+    }
+
+    .metric strong {
+        display: block;
+        margin-bottom: 0.3rem;
+        color: var(--atlas-ink);
+        font-size: 1.55rem;
+        line-height: 1.1;
+    }
+
+    .metric span {
+        color: var(--atlas-muted);
+        font-size: 0.94rem;
+        line-height: 1.45;
+    }
+
+    .section-heading {
+        margin: 2.25rem 0 1rem;
+    }
+
+    .section-heading p {
+        margin: 0.35rem 0 0;
+        max-width: 680px;
+        color: var(--atlas-muted);
+        line-height: 1.65;
+    }
+
+    .summary-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
+        gap: 1rem;
+        align-items: stretch;
+        margin: 1rem 0 2.25rem;
+    }
+
+    .summary-card,
+    .focus-panel {
+        padding: 1.45rem;
+        border-radius: 8px;
+        background: #ffffff;
+        border: 1px solid var(--atlas-border);
+        box-shadow: var(--atlas-shadow);
+    }
+
+    .summary-card p,
+    .focus-panel p {
+        color: #415066;
+        line-height: 1.75;
+        margin: 0 0 0.9rem;
+    }
+
+    .focus-panel {
+        background: #142238;
+        color: #ffffff;
+    }
+
+    .focus-panel h3,
+    .focus-panel p {
+        color: #ffffff !important;
+    }
+
+    .focus-panel ul {
+        margin: 1rem 0 0;
+        padding-left: 1.05rem;
+    }
+
+    .focus-panel li {
+        margin-bottom: 0.55rem;
+        color: rgba(255,255,255,0.82);
+    }
+
+    .highlights-container {
+        margin: 1rem 0 2.25rem;
+    }
+
     .highlight-card {
-        background: white;
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        border-top: 4px solid;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        flex: 1 1 16rem;
+        padding: 1.25rem;
+        border-radius: 8px;
+        background: #ffffff;
+        border: 1px solid var(--atlas-border);
+        box-shadow: var(--atlas-shadow);
     }
-    .highlight-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-    }
-    .highlight-card.ai { border-color: #8b5cf6; }
-    .highlight-card.data { border-color: #06b6d4; }
-    .highlight-card.research { border-color: #10b981; }
+
+    .highlight-card.ai { border-top: 4px solid var(--atlas-blue); }
+    .highlight-card.data { border-top: 4px solid var(--atlas-green); }
+    .highlight-card.research { border-top: 4px solid var(--atlas-violet); }
+    .highlight-card.product { border-top: 4px solid var(--atlas-amber); }
+
     .highlight-card h3 {
-        font-size: 1.1rem;
-        margin-bottom: 10px;
-        color: #1f2937;
+        margin: 0 0 0.55rem;
+        font-size: 1.04rem;
     }
+
     .highlight-card p {
-        font-size: 0.95rem;
-        color: #6b7280;
-        line-height: 1.6;
+        margin: 0;
+        color: var(--atlas-muted);
+        line-height: 1.62;
     }
-    
-    /* Philosophy Quote */
+
     .philosophy-quote {
-        background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
-        color: white;
-        padding: 40px;
-        border-radius: 20px;
-        text-align: center;
-        margin: 40px 0;
+        margin: 2.5rem 0 0.25rem;
+        padding: 2rem;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #142238, #26415f);
+        color: #ffffff;
     }
+
     .philosophy-quote blockquote {
+        margin: 0 0 0.6rem;
+        color: #ffffff;
         font-size: 1.4rem;
         font-style: italic;
-        margin-bottom: 15px;
-        opacity: 0.95;
+        line-height: 1.55;
     }
-    .philosophy-quote .translation {
-        font-size: 1rem;
-        opacity: 0.75;
+
+    .philosophy-quote p {
+        margin: 0;
+        color: rgba(255,255,255,0.72);
+    }
+
+    @media (max-width: 860px) {
+        .hero-section {
+            min-height: 620px;
+            padding: 3rem 1.25rem 2.5rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2.7rem;
+        }
+
+        .summary-panel {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
-# Hero Section
-st.markdown("""
-<div class="hero-section">
-    <h1>André Amorim</h1>
-    <p class="subtitle">Software Engineer & AI Specialist</p>
-    <p class="tagline">Transforming businesses through Artificial Intelligence and Digital Innovation</p>
-    <div class="social-links">
-        <a href="https://www.linkedin.com/in/andr%C3%A9-amorim-73943bb7/" target="_blank">
-            🔗 LinkedIn
-        </a>
-        <a href="https://lattes.cnpq.br/9153087289739313" target="_blank">
-            📄 Lattes CV
-        </a>
-        <a href="https://github.com/Baldros" target="_blank">
-            💻 GitHub
-        </a>
+st.markdown(
+    f"""
+<section class="hero-section"{hero_style}>
+    <div class="hero-copy">
+        <div class="hero-kicker">Software Engineering + Applied AI</div>
+        <h1>Andre Amorim</h1>
+        <p class="subtitle">
+            Software engineer and AI specialist building practical automation,
+            intelligent agents, data products, and modern business systems.
+        </p>
+        <div class="hero-actions">
+            <a class="primary-action" href="experience" target="_self">View experience</a>
+            <a class="secondary-action" href="products" target="_self">Explore Atlas Desktop</a>
+            <a class="secondary-action" href="https://github.com/Baldros" target="_blank">GitHub</a>
+        </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+</section>
+""",
+    unsafe_allow_html=True,
+)
 
-# Render Navbar (after hero)
 render_navbar()
 
-# Executive Summary Section
-colored_header(
-    label="Executive Summary",
-    description="Building intelligent solutions for real-world challenges",
-    color_name="blue-70",
-)
-
-st.markdown("""
-<div class="summary-card">
-    <h2>👋 About Me</h2>
-    <p>
-        Software Engineer and Data Scientist specialized in the intersection of <strong>Artificial Intelligence</strong>, 
-        <strong>business automation</strong>, and <strong>digital transformation</strong>. With consolidated experience 
-        in R&D of intelligent systems, I work on modernizing corporate ecosystems, integrating high-performance AI 
-        solutions into strategic applications such as CRM and management systems.
-    </p>
-    <p>
-        My professional trajectory combines solid technical expertise in <strong>Python</strong>, <strong>Machine Learning</strong>, 
-        and <strong>Microsoft Power Platform</strong> with deep knowledge in environmental data analysis and remote sensing, 
-        resulting from academic research at the Laboratory of Environmental Satellite Applications (LASA-UFRJ).
-    </p>
-    <p>
-        Currently, I lead architectural redesign initiatives for legacy systems at <strong>Deepmath</strong>, focusing on 
-        scalability, technical sustainability, and intelligent agent integration. Previously, I worked as an Innovation 
-        and Automation Specialist at <strong>S4Sys</strong>, developing complex automations and BI reports that drove 
-        operational efficiency.
-    </p>
+st.markdown(
+    """
+<div class="metric-strip">
+    <div class="metric">
+        <strong>AI systems</strong>
+        <span>Agentic workflows, LLM integration, automation, and applied machine learning.</span>
+    </div>
+    <div class="metric">
+        <strong>Business tools</strong>
+        <span>CRM modernization, Power Platform, dashboards, and process automation.</span>
+    </div>
+    <div class="metric">
+        <strong>Research depth</strong>
+        <span>Remote sensing, atmospheric analysis, and data science at UFRJ research labs.</span>
+    </div>
 </div>
-""", unsafe_allow_html=True)
-
-# Highlights Section
-colored_header(
-    label="Core Expertise",
-    description="Key areas where I deliver impact",
-    color_name="blue-70",
+""",
+    unsafe_allow_html=True,
 )
 
-st.markdown("""
+st.markdown(
+    """
+<div class="section-heading">
+    <h2>Executive Summary</h2>
+    <p>Focused engineering profile for organizations that need AI work connected to real operations.</p>
+</div>
+
+<div class="summary-panel">
+    <div class="summary-card">
+        <p>
+            Andre combines software engineering, data science, and automation experience to build systems
+            that reduce manual work and make technical processes easier to operate.
+        </p>
+        <p>
+            His recent work centers on AI-enabled business applications, CRM modernization, intelligent
+            assistants, Power Platform solutions, and analytics for strategic decision-making.
+        </p>
+        <p>
+            The academic side adds a strong quantitative foundation: remote sensing, atmospheric data,
+            environmental analysis, and machine learning research at UFRJ.
+        </p>
+    </div>
+    <aside class="focus-panel">
+        <h3>Current focus</h3>
+        <p>Production-oriented AI and software systems that are useful beyond prototypes.</p>
+        <ul>
+            <li>Agent orchestration with tools and verified context</li>
+            <li>Automation across business workflows</li>
+            <li>Data products that support operational decisions</li>
+            <li>Desktop assistant experience through Atlas Desktop</li>
+        </ul>
+    </aside>
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+<div class="section-heading">
+    <h2>Core Expertise</h2>
+    <p>Four areas where his background connects engineering execution with measurable business value.</p>
+</div>
+
 <div class="highlights-container">
     <div class="highlight-card ai">
-        <h3>🤖 Artificial Intelligence & LLMs</h3>
-        <p>Development of intelligent agents, LLM integration, and machine learning solutions for engineering and business applications.</p>
+        <h3>Artificial Intelligence & LLMs</h3>
+        <p>Tool-using agents, LangChain/LangGraph workflows, model integration, and applied ML systems.</p>
     </div>
     <div class="highlight-card data">
-        <h3>📊 Data Science & Analytics</h3>
-        <p>Advanced analytics, predictive modeling, and business intelligence dashboards that drive strategic decision-making.</p>
+        <h3>Data Science & Analytics</h3>
+        <p>Python/R analysis, BI dashboards, predictive modeling, and decision-support reporting.</p>
     </div>
     <div class="highlight-card research">
-        <h3>🌍 Environmental Research</h3>
-        <p>Remote sensing, atmospheric analysis, and climate modeling using satellite data and AI techniques.</p>
+        <h3>Environmental Research</h3>
+        <p>Satellite data, atmospheric analysis, remote sensing, and scientific data workflows.</p>
+    </div>
+    <div class="highlight-card product">
+        <h3>Product Automation</h3>
+        <p>Atlas Desktop demonstrates local AI assistance, integrations, and practical task automation.</p>
     </div>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
-# Philosophy Quote
-st.markdown("""
+st.markdown(
+    """
 <div class="philosophy-quote">
     <blockquote>"Labor omnia vincit, per aspera ad astra."</blockquote>
-    <p class="translation">Work conquers all, through hardships to the stars.</p>
+    <p>Work conquers all, through hardships to the stars.</p>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
